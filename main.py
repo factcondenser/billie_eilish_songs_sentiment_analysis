@@ -115,20 +115,31 @@ for song in songs:
     scores.append(score)
     magnitudes.append(magnitude)
 
-  fig = go.Figure(
-    data=[go.Bar(x=texts, y=scores)],
-    layout=go.Layout(
-        title=go.layout.Title(
-          text=f"{title} (overall score: {round(overall_score, 2)})",
-          font=dict(size=24)
-        ),
-        yaxis=dict(title="sentiment score")
-    )
-  )
-
   path = f"./charts/{title}"
   if not os.path.exists(path):
     os.makedirs(path)
 
+  fig = go.Figure(
+    data=[go.Bar(x=texts, y=scores)],
+    layout=go.Layout(
+        title=dict(
+          text=f"{title} (overall score: {round(overall_score, 2)})",
+          font=dict(size=24)
+        ),
+        yaxis=dict(
+          title="sentiment score",
+          autorange=False,
+          range=[-1.0, 1.0]
+        )
+    )
+  )
   fig.write_html(f"{path}/{title}.html")
+
+  fig.update_layout(
+    xaxis=dict(
+      showticklabels=False
+    ),
+    autosize=False,
+    height=500
+  )
   fig.write_image(f"{path}/{title}.png")
