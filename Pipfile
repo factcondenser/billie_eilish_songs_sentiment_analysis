@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 google-cloud-language = "*"
 google-cloud = "*"
+plotly = "*"
 
 [requires]
 python_version = "3.7"
