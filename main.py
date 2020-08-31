@@ -1,15 +1,14 @@
-import re, requests
-from bs4 import BeautifulSoup
-from google.cloud import language_v1
-from google.cloud.language_v1 import enums
-
 # def install(package):
 #   import pip
 #   pip.main(["install", package])
 
-# install("google-api-python-client")
 # install("google-cloud")
 # install("google-cloud-language")
+
+import csv, re, requests
+from bs4 import BeautifulSoup
+from google.cloud import language_v1
+from google.cloud.language_v1 import enums
 
 #######################################
 ## Get all Billie Eilish song lyrics ##
@@ -71,18 +70,39 @@ def analyze_sentiment(text_content):
   encoding_type = enums.EncodingType.UTF8
   return client.analyze_sentiment(document, encoding_type=encoding_type)
 
+analyzed_songs = {}
 
 for (title, lyrics) in songs.items():
-  tidy_lyrics = re.sub(r"\[.*\]\n", "", lyrics)
+  tidy_lyrics = re.sub(r"(\w)\n", r"\1.\n", re.sub(r"\[.*\]\n", "", lyrics))
   response = analyze_sentiment(tidy_lyrics)
 
-  print("#" * (len(title) + 3))
-  print(f"## {title}")
-  print(f"## Overall sentiment score: {response.document_sentiment.score}")
-  print(f"## Overall sentiment magnitude: {response.document_sentiment.magnitude}")
-  print("#" * (len(title) + 3))
+  analyzed_song = [{
+    "line": title,
+    "score": response.document_sentiment.score,
+    "magnitude": response.document_sentiment.magnitude
+  }]
 
   for s in response.sentences:
-    print(f"{s.text.content} - score: {s.sentiment.score}, mag: {s.sentiment.magnitude}")
+    analyzed_song.append({
+      "line": s.text.content,
+      "score": s.sentiment.score,
+      "magnitude": s.sentiment.magnitude
+    })
 
-import code; code.interact(local=dict(globals(), **locals()))
+  analyzed_songs[title] = analyzed_song
+
+#####################################
+## Write sentiment scores to a CSV ##
+#####################################
+
+with open("./billie_elish_songs_sentiment_scores.csv", mode="w") as csv_file:
+  fieldnames = ["line", "score", "magnitude"]
+  writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+  writer.writeheader()
+
+  for line_dicts in analyzed_songs.values():
+    for line_dict in line_dicts:
+      writer.writerow(line_dict)
+
+    writer.writerow({})
