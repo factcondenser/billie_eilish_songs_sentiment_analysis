@@ -9,6 +9,7 @@ verify_ssl = true
 google-cloud-language = "*"
 google-cloud = "*"
 plotly = "*"
+psutil = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,4 +1,4 @@
-import json, re, requests
+import json, os, re, requests
 import plotly.graph_objects as go
 
 from bs4 import BeautifulSoup
@@ -73,34 +73,34 @@ def fetch_genius_lyrics(genius_url):
 ## MAIN SCRIPT ##
 #################
 
-songs = []
+# songs = []
 
-song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
-for song_title in song_titles:
-  genius_url = build_genius_url_for_billie_eilish_song(song_title)
-  lyrics = fetch_genius_lyrics(genius_url)
-  tidy_lyrics = clean_up_genius_lyrics(lyrics)
-  analysis_result = analyze_sentiment(tidy_lyrics)
+# song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
+# for song_title in song_titles:
+#   genius_url = build_genius_url_for_billie_eilish_song(song_title)
+#   lyrics = fetch_genius_lyrics(genius_url)
+#   tidy_lyrics = clean_up_genius_lyrics(lyrics)
+#   analysis_result = analyze_sentiment(tidy_lyrics)
 
-  song = {
-    "title": song_title,
-    "score": analysis_result.document_sentiment.score,
-    "magnitude": analysis_result.document_sentiment.magnitude,
-    "lines": []
-  }
+#   song = {
+#     "title": song_title,
+#     "score": analysis_result.document_sentiment.score,
+#     "magnitude": analysis_result.document_sentiment.magnitude,
+#     "lines": []
+#   }
 
-  for sentence in analysis_result.sentences:
-    song["lines"].append({
-      "text": sentence.text.content,
-      "score": sentence.sentiment.score,
-      "magnitude": sentence.sentiment.magnitude
-    })
+#   for sentence in analysis_result.sentences:
+#     song["lines"].append({
+#       "text": sentence.text.content,
+#       "score": sentence.sentiment.score,
+#       "magnitude": sentence.sentiment.magnitude
+#     })
 
-  songs.append(song)
+#   songs.append(song)
 
-# Write songs data to a JSON file.
-with open("analyzed_songs.json", "w") as json_file:
-  json.dump(songs, json_file)
+# # Write songs data to a JSON file.
+# with open("analyzed_songs.json", "w") as json_file:
+#   json.dump(songs, json_file)
 
 # Visualize the data with plotly.
 with open("./analyzed_songs.json") as json_file:
@@ -126,4 +126,9 @@ for song in songs:
     )
   )
 
-  fig.write_html(f"./charts/{title}.html")
+  path = f"./charts/{title}"
+  if not os.path.exists(path):
+    os.makedirs(path)
+
+  fig.write_html(f"{path}/{title}.html")
+  fig.write_image(f"{path}/{title}.png")
