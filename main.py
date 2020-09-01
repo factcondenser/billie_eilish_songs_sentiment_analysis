@@ -142,10 +142,8 @@ def generate_readme(songs):
   ))
 
   with open(PATH_TO_README, "w") as readme:
-    readme.write("### Songs with highest sentiment score\n")
-    readme.write(f'{", ".join(highest_scoring_stings)}\n')
-    readme.write("### Songs with lowest sentiment score\n")
-    readme.write(f'{", ".join(lowest_scoring_stings)}\n')
+    readme.write(f'**Songs with highest sentiment score:** {", ".join(highest_scoring_stings)}  \n')
+    readme.write(f'**Songs with lowest sentiment score:** {", ".join(lowest_scoring_stings)}  \n')
 
     for song in songs:
       title = song["title"]
