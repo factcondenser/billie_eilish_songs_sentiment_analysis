@@ -9,12 +9,14 @@ from google.cloud.language_v1 import enums
 ## CONSTANTS ##
 ###############
 
+DECIMAL_PLACES = 2
 GITHUB_REPO_NAME = "billie_eilish_songs_sentiment_analysis"
 GITHUB_USERNAME = "factcondenser"
 PATH_TO_ANALYZED_SONGS_JSON = "analyzed_songs.json"
 PATH_TO_CHARTS = "charts"
 PATH_TO_GOOGLE_SERVICE_ACCOUNT_JSON = "service_account_viewer.json"
 PATH_TO_README = "README.md"
+README_CHART_HEIGHT = 300
 
 ##########################
 ## FUNCTION DEFINITIONS ##
@@ -74,7 +76,7 @@ def fetch_genius_lyrics(genius_url):
   lyrics_div = soup.find(class_="lyrics")
   return lyrics_div.find("p").get_text()
 
-# Generate HTML and PNG charts for each song.
+# Generate HTML and PNG charts from the songs data.
 def generate_charts(songs):
   for song in songs:
     title, overall_score, _overall_magnitude, lines = song.values()
@@ -94,7 +96,7 @@ def generate_charts(songs):
       data=[go.Bar(x=texts, y=scores)],
       layout=go.Layout(
           title=dict(
-            text=f"{title} (overall score: {round(overall_score, 2)})",
+            text=f"{title} (overall score: {round(overall_score, DECIMAL_PLACES)})",
             font=dict(size=24)
           ),
           yaxis=dict(
@@ -115,15 +117,33 @@ def generate_charts(songs):
     )
     fig.write_image(f"{path}/{title}.png")
 
-# Generate a README containing links to each song chart (assumes code is hosted on GitHub).
+# Generate a README from the songs data (assumes code is hosted on GitHub).
 def generate_readme(songs):
+  sorted_songs = sorted(songs, key=lambda x : (x["score"], x["title"]))
+  sorted_unique_scores = sorted(list(set(map(lambda x : x["score"], songs))))
+
+  lowest_score = sorted_unique_scores[0]
+  second_highest_score = sorted_unique_scores[-2]
+  highest_score = sorted_unique_scores[-1]
+
+  lowest_scoring = list(filter(lambda x : x["score"] == lowest_score, sorted_songs))
+  highest_scoring = list(filter(lambda x : x["score"] in [highest_score, second_highest_score], reversed(sorted_songs)))
+
   with open(PATH_TO_README, "w") as readme:
+    readme.write("### Songs with highest sentiment score\n")
+    for song in highest_scoring:
+      readme.write(f'{song["title"]} ({round(song["score"], DECIMAL_PLACES)})  \n')
+
+    readme.write("### Songs with lowest sentiment score\n")
+    for song in lowest_scoring:
+      readme.write(f'{song["title"]} ({round(song["score"], DECIMAL_PLACES)})  \n')
+
     for song in songs:
       title = song["title"]
       readme.write(
         f'''
 <a href="https://htmlpreview.github.io/?https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{PATH_TO_CHARTS}/{title}.html">
-  <img src="https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{PATH_TO_CHARTS}/{title}.png" height="235"/>
+  <img src="https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{PATH_TO_CHARTS}/{title}.png" height="{README_CHART_HEIGHT}"/>
 </a>
         '''
       )
@@ -132,38 +152,38 @@ def generate_readme(songs):
 ## MAIN SCRIPT ##
 #################
 
-songs = []
+# songs = []
 
-song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
-for song_title in song_titles:
-  genius_url = build_genius_url_for_billie_eilish_song(song_title)
-  lyrics = fetch_genius_lyrics(genius_url)
-  tidy_lyrics = clean_up_genius_lyrics(lyrics)
-  analysis_result = analyze_sentiment(tidy_lyrics)
+# song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
+# for song_title in song_titles:
+#   genius_url = build_genius_url_for_billie_eilish_song(song_title)
+#   lyrics = fetch_genius_lyrics(genius_url)
+#   tidy_lyrics = clean_up_genius_lyrics(lyrics)
+#   analysis_result = analyze_sentiment(tidy_lyrics)
 
-  song = {
-    "title": song_title,
-    "score": analysis_result.document_sentiment.score,
-    "magnitude": analysis_result.document_sentiment.magnitude,
-    "lines": []
-  }
+#   song = {
+#     "title": song_title,
+#     "score": analysis_result.document_sentiment.score,
+#     "magnitude": analysis_result.document_sentiment.magnitude,
+#     "lines": []
+#   }
 
-  for sentence in analysis_result.sentences:
-    song["lines"].append({
-      "text": sentence.text.content,
-      "score": sentence.sentiment.score,
-      "magnitude": sentence.sentiment.magnitude
-    })
+#   for sentence in analysis_result.sentences:
+#     song["lines"].append({
+#       "text": sentence.text.content,
+#       "score": sentence.sentiment.score,
+#       "magnitude": sentence.sentiment.magnitude
+#     })
 
-  songs.append(song)
+#   songs.append(song)
 
-# Write songs data to JSON file.
-with open("analyzed_songs.json", "w") as json_file:
-  json.dump(songs, json_file)
+# # Write songs data to JSON file.
+# with open("analyzed_songs.json", "w") as json_file:
+#   json.dump(songs, json_file)
 
 # Load songs data from JSON file.
 with open("./analyzed_songs.json") as json_file:
   songs = json.load(json_file)
 
-generate_charts(songs)
+# generate_charts(songs)
 generate_readme(songs)
