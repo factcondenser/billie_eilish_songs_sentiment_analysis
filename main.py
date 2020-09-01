@@ -160,38 +160,38 @@ def generate_readme(songs):
 ## MAIN SCRIPT ##
 #################
 
-# songs = []
+songs = []
 
-# song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
-# for song_title in song_titles:
-#   genius_url = build_genius_url_for_billie_eilish_song(song_title)
-#   lyrics = fetch_genius_lyrics(genius_url)
-#   tidy_lyrics = clean_up_genius_lyrics(lyrics)
-#   analysis_result = analyze_sentiment(tidy_lyrics)
+song_titles = fetch_items_from_wikipedia_category("Billie_Eilish_songs")
+for song_title in song_titles:
+  genius_url = build_genius_url_for_billie_eilish_song(song_title)
+  lyrics = fetch_genius_lyrics(genius_url)
+  tidy_lyrics = clean_up_genius_lyrics(lyrics)
+  analysis_result = analyze_sentiment(tidy_lyrics)
 
-#   song = {
-#     "title": song_title,
-#     "score": analysis_result.document_sentiment.score,
-#     "magnitude": analysis_result.document_sentiment.magnitude,
-#     "lines": []
-#   }
+  song = {
+    "title": song_title,
+    "score": analysis_result.document_sentiment.score,
+    "magnitude": analysis_result.document_sentiment.magnitude,
+    "lines": []
+  }
 
-#   for sentence in analysis_result.sentences:
-#     song["lines"].append({
-#       "text": sentence.text.content,
-#       "score": sentence.sentiment.score,
-#       "magnitude": sentence.sentiment.magnitude
-#     })
+  for sentence in analysis_result.sentences:
+    song["lines"].append({
+      "text": sentence.text.content,
+      "score": sentence.sentiment.score,
+      "magnitude": sentence.sentiment.magnitude
+    })
 
-#   songs.append(song)
+  songs.append(song)
 
-# # Write songs data to JSON file.
-# with open("analyzed_songs.json", "w") as json_file:
-#   json.dump(songs, json_file)
+# Write songs data to JSON file.
+with open("analyzed_songs.json", "w") as json_file:
+  json.dump(songs, json_file)
 
 # Load songs data from JSON file.
 with open("./analyzed_songs.json") as json_file:
   songs = json.load(json_file)
 
-# generate_charts(songs)
+generate_charts(songs)
 generate_readme(songs)
