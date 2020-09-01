@@ -119,15 +119,19 @@ def generate_charts(songs):
 
 # Generate a README from the songs data (assumes code is hosted on GitHub).
 def generate_readme(songs):
-  sorted_songs = sorted(songs, key=lambda x : (x["score"], x["title"]))
   sorted_unique_scores = sorted(list(set(map(lambda x : x["score"], songs))))
-
   lowest_score = sorted_unique_scores[0]
   second_highest_score = sorted_unique_scores[-2]
   highest_score = sorted_unique_scores[-1]
 
-  lowest_scoring = list(filter(lambda x : x["score"] == lowest_score, sorted_songs))
-  highest_scoring = list(filter(lambda x : x["score"] in [highest_score, second_highest_score], reversed(sorted_songs)))
+  lowest_scoring = list(filter(
+    lambda x : x["score"] == lowest_score,
+    sorted(songs, key=lambda x : (x["score"], x["title"]))
+  ))
+  highest_scoring = list(filter(
+    lambda x : x["score"] in [highest_score, second_highest_score],
+    sorted(songs, key=lambda x : (-x["score"], x["title"]))
+  ))
 
   with open(PATH_TO_README, "w") as readme:
     readme.write("### Songs with highest sentiment score\n")

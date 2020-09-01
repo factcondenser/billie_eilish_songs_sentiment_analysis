@@ -1,7 +1,7 @@
 ### Songs with highest sentiment score
 !!!!!!! (0.2)  
-You Should See Me in a Crown (0.1)  
 Lovely (0.1)  
+You Should See Me in a Crown (0.1)  
 ### Songs with lowest sentiment score
 Copycat (-0.4)  
 Party Favor (-0.4)  
