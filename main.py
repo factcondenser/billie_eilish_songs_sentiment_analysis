@@ -140,10 +140,11 @@ def generate_readme(songs):
 
     for song in songs:
       title = song["title"]
+      path = f"{PATH_TO_CHARTS}/{title}"
       readme.write(
         f'''
-<a href="https://htmlpreview.github.io/?https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{PATH_TO_CHARTS}/{title}.html">
-  <img src="https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{PATH_TO_CHARTS}/{title}.png" height="{README_CHART_HEIGHT}"/>
+<a href="https://htmlpreview.github.io/?https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{path}/{title}.html">
+  <img src="https://github.com/{GITHUB_USERNAME}/{GITHUB_REPO_NAME}/blob/master/{path}/{title}.png" height="{README_CHART_HEIGHT}"/>
 </a>
         '''
       )
