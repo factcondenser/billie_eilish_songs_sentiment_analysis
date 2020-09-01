@@ -16,7 +16,7 @@ PATH_TO_ANALYZED_SONGS_JSON = "analyzed_songs.json"
 PATH_TO_CHARTS = "charts"
 PATH_TO_GOOGLE_SERVICE_ACCOUNT_JSON = "service_account_viewer.json"
 PATH_TO_README = "README.md"
-README_CHART_HEIGHT = 300
+README_CHART_HEIGHT = 275
 
 ##########################
 ## FUNCTION DEFINITIONS ##
