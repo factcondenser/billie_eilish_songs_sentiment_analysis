@@ -1,11 +1,7 @@
 ### Songs with highest sentiment score
-!!!!!!! (0.2)  
-Lovely (0.1)  
-You Should See Me in a Crown (0.1)  
+!!!!!!! (0.2), Lovely (0.1), You Should See Me in a Crown (0.1)
 ### Songs with lowest sentiment score
-Copycat (-0.4)  
-Party Favor (-0.4)  
-Xanny (-0.4)  
+Copycat (-0.4), Party Favor (-0.4), Xanny (-0.4)
 
 <a href="https://htmlpreview.github.io/?https://github.com/factcondenser/billie_eilish_songs_sentiment_analysis/blob/master/charts/!!!!!!!/!!!!!!!.html">
   <img src="https://github.com/factcondenser/billie_eilish_songs_sentiment_analysis/blob/master/charts/!!!!!!!/!!!!!!!.png" height="285"/>

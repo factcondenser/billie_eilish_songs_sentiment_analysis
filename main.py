@@ -132,15 +132,20 @@ def generate_readme(songs):
     lambda x : x["score"] in [highest_score, second_highest_score],
     sorted(songs, key=lambda x : (-x["score"], x["title"]))
   ))
+  highest_scoring_stings = list(map(
+    lambda x : f'{x["title"]} ({round(x["score"], DECIMAL_PLACES)})',
+    highest_scoring
+  ))
+  lowest_scoring_stings = list(map(
+    lambda x : f'{x["title"]} ({round(x["score"], DECIMAL_PLACES)})',
+    lowest_scoring
+  ))
 
   with open(PATH_TO_README, "w") as readme:
     readme.write("### Songs with highest sentiment score\n")
-    for song in highest_scoring:
-      readme.write(f'{song["title"]} ({round(song["score"], DECIMAL_PLACES)})  \n')
-
+    readme.write(f'{", ".join(highest_scoring_stings)}\n')
     readme.write("### Songs with lowest sentiment score\n")
-    for song in lowest_scoring:
-      readme.write(f'{song["title"]} ({round(song["score"], DECIMAL_PLACES)})  \n')
+    readme.write(f'{", ".join(lowest_scoring_stings)}\n')
 
     for song in songs:
       title = song["title"]
